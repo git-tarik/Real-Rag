@@ -1,9 +1,48 @@
-NexusRAG: State-of-the-Art Open Source RAG Pipeline🚀 Project OverviewNexusRAG is a next-generation Retrieval-Augmented Generation (RAG) pipeline designed to achieve State-of-the-Art (SOTA) performance using entirely open-source components.Moving beyond naive RAG (simple vector search), this project implements Advanced RAG patterns including Hybrid Search (Sparse + Dense), Cross-Encoder Reranking, and Agentic Reasoning. The goal is to create a hallucination-resistant, high-precision Q&A system capable of handling complex document structures.✨ Key Features⚡ Hybrid Search: Combines dense vector retrieval (semantic meaning) with sparse keyword search (BM25) to capture both conceptual understanding and exact terminology match.🧠 SOTA Open Source LLM: Powered by DeepSeek-V3 (via Ollama/vLLM), delivering GPT-4 class performance locally or via open API.🎯 Cross-Encoder Reranking: Utilizes BAAI/bge-reranker-v2-m3 to re-score retrieved context, significantly improving precision before the context hits the LLM.📊 Robust Embeddings: Uses BAAI/bge-m3 for multi-lingual, multi-granularity embeddings (dense, sparse, and ColBERT-style).🏗️ Modular Architecture: Built with LlamaIndex for easy swapping of components (vector stores, LLMs, embedders).🐳 Containerized: Fully dockerized stack (Vector DB + App + LLM Server) for instant deployment.🛠️ Tech StackThis pipeline is built on the "Modern Open Source AI Stack" (2025/2026 standards):ComponentTechnologyWhy this choice?OrchestrationLlamaIndexSuperior to LangChain for data indexing, recursive retrieval, and complex RAG patterns.LLMDeepSeek-V3The current SOTA for open-source reasoning and coding, rivaling proprietary top-tier models.EmbeddingBAAI/bge-m3Supports dense, sparse, and multi-vector retrieval in a single model.Vector DBQdrantHigh-performance, Rust-based, native support for Hybrid Search and highly scalable.Rerankerbge-reranker-v2A Cross-Encoder that drastically reduces hallucinations by filtering irrelevant retrieved chunks.UIChainlitA "ChatGPT-like" UI built specifically for Python RAG apps; faster to build than Streamlit.InferenceOllamaLocal LLM hosting for privacy and zero API costs during development.🏗️ Architecture & Implementation IdeaThe pipeline follows an "Ingest -> Index -> Retrieve -> Rank -> Generate" workflow:Ingestion & Chunking:Documents (PDF, Markdown, TXT) are ingested.Semantic Chunking is applied (instead of fixed character splitting) to keep related text together.Hybrid Indexing:Chunks are embedded into dense vectors using bge-m3.Simultaneously, a sparse inverted index (BM25) is built for keyword matching.Both are stored in Qdrant.Retrieval Engine:Query is processed to generate both a vector and keyword extraction.System fetches the top k results from both indices (Dense + Sparse).Reciprocal Rank Fusion (RRF) combines these results into a single candidate list.Reranking (The "Secret Sauce"):The top candidates (e.g., 20 chunks) are passed to the Cross-Encoder Model.The model scores each chunk's relevance to the specific query.Only the top 5 highly relevant chunks are sent to the LLM.Generation:DeepSeek-V3 synthesizes the answer based strictly on the reranked context.💾 Installation & SetupPrerequisitesDocker & Docker ComposePython 3.11+NVIDIA GPU (Recommended for local LLM inference)1. Clone the RepositoryBashgit clone https://github.com/yourusername/NexusRAG.git
-cd NexusRAG
-2. Environment SetupCreate a .env file:Bashcp .env.example .env
-Tip: If using Ollama locally, no API keys are required.3. Run with DockerSpin up the Vector DB (Qdrant) and the App:Bashdocker-compose up -d --build
-4. Install Local Dependencies (For development)Bashpip install poetry
-poetry install
-🚀 UsageStart the UI:Bashchainlit run app.py -w
-Ingest Documents:Place your PDFs in the data/ directory. The ingestion script acts as a watcher or can be triggered manually:Bashpython src/ingest.py
-Chat:Open http://localhost:8000 to interact with your RAG pipeline.🔮 Future Roadmap[ ] Agentic RAG: Implement a routing agent that can decide whether to search the vector DB or use a web search tool (Serper/Tavily).[ ] GraphRAG: Integrate Knowledge Graphs (Neo4j) to capture relationships between entities across documents.[ ] Multimodal Support: Upgrade to Qwen3-VL to support querying images and charts within PDFs.Author: [Your Name]University: Central University of JharkhandNext StepWould you like me to generate the docker-compose.yml and the requirements.txt files for this stack so you can immediately start building?AWS re:Invent 2025 - Advanced RAG ArchitecturesThis video from AWS re:Invent covers the advanced architectural patterns (like Agentic RAG and Recursive Retrieval) that are essential for understanding the "Best RAG" concepts implemented in this project.
+# ⚡ NexusRAG: High-Performance Open Source RAG Pipeline
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![LlamaIndex](https://img.shields.io/badge/LlamaIndex-Orchestration-8A2BE2?style=for-the-badge)
+![DeepSeek](https://img.shields.io/badge/DeepSeek-V3-4B0082?style=for-the-badge)
+![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-D91846?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+## 📖 Overview
+
+**NexusRAG** is a state-of-the-art **Retrieval-Augmented Generation (RAG)** pipeline designed to solve the common pitfalls of naive RAG systems (hallucinations, low recall, and poor context handling). 
+
+Built entirely with **latest open-source components** (2025/2026 standards), this project prioritizes modularity, privacy, and performance. It implements **Advanced RAG** patterns including Hybrid Search (Sparse + Dense), Cross-Encoder Reranking, and Semantic Chunking to deliver enterprise-grade Q&A capabilities on local hardware.
+
+## ✨ Key Features
+
+* **🧠 SOTA Open Source LLM:** Powered by **DeepSeek-V3**, offering top-tier reasoning capabilities comparable to proprietary models, hosted locally via Ollama.
+* **🔍 Hybrid Search Engine:** Combines **Dense Vector Search** (semantic meaning) with **Sparse BM25** (keyword matching) using **Qdrant** for maximum retrieval accuracy.
+* **⚖️ Cross-Encoder Reranking:** Utilizes the `BAAI/bge-reranker-v2-m3` model to re-evaluate and filter retrieved contexts, ensuring the LLM only sees the most relevant data.
+* **🌐 Universal Embeddings:** Implements `BAAI/bge-m3` for state-of-the-art multi-lingual and multi-granularity embeddings.
+* **💬 Modern UI:** Features a clean, chat-interface frontend built with **Chainlit**.
+* **🐳 Dockerized:** Fully containerized environment for consistent deployment across any machine.
+
+## 🛠️ Tech Stack
+
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Orchestrator** | [LlamaIndex](https://www.llamaindex.ai/) | The data framework for LLM applications. |
+| **LLM** | [DeepSeek-V3](https://github.com/deepseek-ai/DeepSeek-V3) | Running via [Ollama](https://ollama.com/) for local inference. |
+| **Vector DB** | [Qdrant](https://qdrant.tech/) | High-performance vector search engine with Hybrid support. |
+| **Embeddings** | [BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3) | One-stop model for dense, sparse, and colbert embeddings. |
+| **Reranker** | [bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3) | Cross-encoder for precise context scoring. |
+| **Frontend** | [Chainlit](https://docs.chainlit.io/get-started/overview) | Production-ready Conversational AI UI. |
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[User Query] --> B(Hybrid Retrieval)
+    B --> C{Qdrant Vector DB}
+    C -->|Dense Vectors| D[Semantic Results]
+    C -->|Sparse BM25| E[Keyword Results]
+    D & E --> F[Reciprocal Rank Fusion]
+    F --> G[Cross-Encoder Reranker]
+    G --> H[Top-K Context]
+    H --> I[DeepSeek-V3 LLM]
+    I --> J[Final Answer]

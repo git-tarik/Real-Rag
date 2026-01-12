@@ -1,43 +1,197 @@
-# ⚡ Ultimate Open-Source RAG Pipeline
+# 🧩 Modular RAG (Working Title)
 
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![RAG](https://img.shields.io/badge/Architecture-RAG-FF4B4B?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-In_Development-yellow?style=for-the-badge)
-![Open Source](https://img.shields.io/badge/Open_Source-Yes-46a2f1?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+> A composable, production-oriented Retrieval-Augmented Generation (RAG) stack built from **best-in-class open-source components**.
 
-## 📄 Project Description
-
-This project aims to architect and implement the **"Ultimate" Retrieval-Augmented Generation (RAG) Pipeline** step-by-step, utilizing only the absolute best and most updated open-source components available.
-
-The goal is to move beyond simple vector search and build a production-grade, local-first system that minimizes hallucinations and maximizes retrieval accuracy. We are integrating State-of-the-Art (SOTA) technologies to solve complex challenges such as:
-* **Hybrid Search:** Combining dense semantic vectors with sparse keyword matching.
-* **Advanced Reranking:** Using Cross-Encoders to filter noise before it reaches the LLM.
-* **Agentic Reasoning:** Empowering the system to "think" and plan its search strategy.
-* **Modular Design:** A flexible architecture where components can be swapped or upgraded easily.
-
-This repository serves as a blueprint and implementation log for building a high-performance AI system entirely on open-source foundations.
-
-## 🛠️ Tech Stack & Components
-
-We have selected these components based on their current standing as the "Best in Class" for open-source AI.
-
-| Component Role | Selected Technology | Usage / Description | GitHub / Source Link |
-| :--- | :--- | :--- | :--- |
-| **LLM (Reasoning)** | **DeepSeek-V3** | The current SOTA open-source model for coding and complex reasoning. | |
-| **Orchestration** | **LlamaIndex** | Framework for connecting data sources and managing the RAG workflow. | |
-| **Vector Database** | **Qdrant** | High-performance vector engine supporting native Hybrid Search. | |
-| **Embeddings** | **BAAI/bge-m3** | Generates dense, sparse, and multi-vector embeddings in one pass. | |
-| **Reranker** | **BAAI/bge-reranker-v2-m3** | Cross-encoder model to re-score and filter retrieved documents. | |
-| **Inference Server** | **Ollama / vLLM** | For serving the LLM locally with high throughput. | |
-| **User Interface** | **Chainlit** | A fast, chat-based UI designed specifically for Python AI apps. | |
-| **Containerization** | **Docker** | Ensures the entire stack is portable and easy to deploy. | |
-
-## 📂 Project Repository
-
-You can find the source code and documentation for this project here:
-
-**🔗 [ INSERT GITHUB REPO LINK HERE ]**
+This repository is **not a framework**.  
+It is a **modular system** that lets you assemble RAG pipelines using independently excellent components from the open-source ecosystem.
 
 ---
-*This project is currently under active development. Check back for updates on the implementation steps.*
+
+## Why this exists
+
+Most RAG solutions today are **monolithic**:
+- one repo
+- one opinion
+- one way to chunk, retrieve, rerank, and prompt
+
+In practice, this doesn’t match reality.
+
+Different problems need:
+- different chunking strategies  
+- different retrieval methods  
+- different latency / cost tradeoffs  
+
+And the open-source community already builds **amazing single-purpose components**.
+
+This repo exists to:
+- define **clean interfaces**
+- provide **glue code**
+- enable **swap-ability**
+- encourage **benchmark-driven choices**
+
+---
+
+## Design principles
+
+### 1. Modular by default
+Each RAG stage is an independent module that can be replaced without touching the rest of the pipeline.
+
+```
+
+Ingestion → Chunking → Embedding → Storage → Retrieval → Reranking → Generation
+
+```
+
+No module assumes implementation details of another.
+
+---
+
+### 2. Interfaces over implementations
+This repo defines **contracts**, not winners.
+
+If a component follows the interface, it can plug in.
+
+---
+
+### 3. Production-first
+Every abstraction here is designed with:
+- observability
+- latency awareness
+- failure handling
+- cost visibility  
+
+in mind.
+
+---
+
+### 4. Opinionated structure, neutral components
+We are opinionated about:
+- directory layout
+- interfaces
+- lifecycle
+
+We are neutral about:
+- which open-source project is “best”
+
+That evolves over time.
+
+---
+
+## Repository structure (high level)
+
+```
+
+modular-rag/
+│
+├── core/                 # Interfaces, base types, shared utilities
+│
+├── components/           # Adapters to external open-source components
+│   ├── chunking/
+│   ├── embeddings/
+│   ├── storage/
+│   ├── retrieval/
+│   ├── reranking/
+│   └── generation/
+│
+├── pipelines/            # Reference RAG pipelines (minimal, composable)
+│
+├── benchmarks/           # Evaluation & comparison harnesses
+│
+├── examples/             # End-to-end runnable examples
+│
+├── docs/                 # Deep dives, design notes, decisions
+│
+└── CONTRIBUTING.md
+
+```
+
+---
+
+## Core concepts
+
+### Components
+A **component** does one thing well.
+
+Examples:
+- chunk a document
+- embed text
+- retrieve candidates
+- rerank results
+
+Each component:
+- implements a well-defined interface
+- declares its assumptions
+- exposes metrics
+
+---
+
+### Pipelines
+A **pipeline** wires components together.
+
+Pipelines are:
+- explicit
+- readable
+- debuggable
+
+No hidden magic.
+
+---
+
+### Benchmarks
+Benchmarks exist to answer questions like:
+- “Is this chunker better for this data?”
+- “Does reranking help enough to justify latency?”
+- “What breaks at scale?”
+
+Benchmarks drive defaults, not opinions.
+
+---
+
+## What this repo is NOT
+
+- ❌ Not a low-code abstraction
+- ❌ Not a wrapper around a single vendor
+- ❌ Not another all-in-one RAG framework
+- ❌ Not optimized for demos only
+
+---
+
+## Who this is for
+
+- Engineers building **production RAG systems**
+- Researchers experimenting with **retrieval strategies**
+- Teams who want **control without reinvention**
+- Contributors who enjoy improving one thing deeply
+
+---
+
+## Current status
+
+🚧 **Early & evolving**
+
+- Interfaces are stabilizing
+- Components are being evaluated and integrated incrementally
+- README will evolve as understanding improves
+
+Expect breaking changes early on.
+
+---
+
+## How to contribute
+
+You can contribute by:
+- exploring and integrating a component
+- improving interfaces
+- adding benchmarks
+- documenting tradeoffs
+- sharing real-world lessons
+
+See `CONTRIBUTING.md`.
+
+---
+
+## Philosophy
+
+> Let specialists build the best tools.  
+> Let systems engineers assemble them cleanly.
+```

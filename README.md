@@ -1,4 +1,4 @@
-# 🧩 Modular RAG (Working Title)
+# 🧩 Modular RAG
 
 > A composable, production-oriented Retrieval-Augmented Generation (RAG) stack built from **best-in-class open-source components**.
 
